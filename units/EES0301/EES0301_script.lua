@@ -1,12 +1,12 @@
-#****************************************************************************
-#**
-#**  File     :  /cdimage/units/UES0304/UES0304_script.lua
-#**  Author(s):  John Comes, David Tomandl
-#**
-#**  Summary  :  UEF Strategic Missile Submarine Script
-#**
-#**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
-#****************************************************************************
+--****************************************************************************
+--**
+--**  File     :  /cdimage/units/UES0304/UES0304_script.lua
+--**  Author(s):  John Comes, David Tomandl
+--**
+--**  Summary  :  UEF Strategic Missile Submarine Script
+--**
+--**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+--****************************************************************************
 
 local TSubUnit = import('/lua/terranunits.lua').TSubUnit
 local WeaponFile = import('/lua/terranweapons.lua')
@@ -25,20 +25,20 @@ EES0301 = Class(TSubUnit) {
         CruiseMissiles = Class(TIFCruiseMissileLauncherSub) {},
         AdvancedTorpedos = Class(TANTorpedoAngler) {},
         SAMLauncher = Class(TSAMLauncher) {},
-        GatlingCannon = Class(TDFHeavyPlasmaCannonWeapon) {       
+        GatlingCannon = Class(TDFHeavyPlasmaCannonWeapon) {
             PlayFxWeaponPackSequence = function(self)
                 if self.SpinManip then
                     self.SpinManip:SetTargetSpeed(0)
                 end
-                self.ExhaustEffects = EffectUtils.CreateBoneEffects( self.unit, 'Gat_Turret', self.unit:GetArmy(), Effects.WeaponSteam01 )
+                self.ExhaustEffects = EffectUtils.CreateBoneEffects(self.unit, 'Gat_Turret', self.unit:GetArmy(), Effects.WeaponSteam01)
                 TDFHeavyPlasmaCannonWeapon.PlayFxWeaponPackSequence(self)
             end,
             PlayFxRackSalvoChargeSequence = function(self)
-                if not self.SpinManip then 
+                if not self.SpinManip then
                     self.SpinManip = CreateRotator(self.unit, 'Gat_Barrel', 'z', nil, 270, 180, 60)
                     self.unit.Trash:Add(self.SpinManip)
                 end
-                
+
                 if self.SpinManip then
                     self.SpinManip:SetTargetSpeed(500)
                 end
@@ -48,9 +48,9 @@ EES0301 = Class(TSubUnit) {
                 if self.SpinManip then
                     self.SpinManip:SetTargetSpeed(200)
                 end
-                self.ExhaustEffects = EffectUtils.CreateBoneEffects( self.unit, 'Gat_Turret', self.unit:GetArmy(), Effects.WeaponSteam01 )
+                self.ExhaustEffects = EffectUtils.CreateBoneEffects(self.unit, 'Gat_Turret', self.unit:GetArmy(), Effects.WeaponSteam01)
                 TDFHeavyPlasmaCannonWeapon.PlayFxRackSalvoChargeSequence(self)
-            end,    
+            end,
         },
         TacticalNuke = Class(TIFCruiseMissileLauncher) {},
     },
@@ -68,7 +68,7 @@ EES0301 = Class(TSubUnit) {
         end
     end,
 
-    OnLayerChange = function( self, new, old )
+    OnLayerChange = function(self, new, old)
         TSubUnit.OnLayerChange(self, new, old)
         if new == 'Water' then
             self:SetWeaponEnabledByLabel('GatlingCannon', true)
