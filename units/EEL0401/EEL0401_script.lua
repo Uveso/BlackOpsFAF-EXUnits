@@ -81,7 +81,7 @@ EEL0401 = Class(TMobileFactoryUnit) {
 
     OnMotionHorzEventChange = function(self, new, old)
         TMobileFactoryUnit.OnMotionHorzEventChange(self, new, old)
-        if self:IsDead() then return end
+        if self.Dead then return end
         if(not self.IsWaiting) then
             if(self.Walking) then
                 if(old == 'Stopped') then
