@@ -170,6 +170,7 @@ UnitBlueprint {
         TechLevel = 'RULEUTL_Secret',
         UnitName = 'Faithbreaker',
         UnitWeight = 1,
+        TeleportDelay = 10,
     },
     Intel = {
         RadarStealth = true,
