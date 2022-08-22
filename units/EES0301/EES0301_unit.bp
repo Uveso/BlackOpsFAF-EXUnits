@@ -428,7 +428,7 @@ UnitBlueprint {
             Damage = 0,
             DamageFriendly = true,
             DamageRadius = 0,
-            DamageType = 'Normal',
+            DamageType = 'Nuke',
             DisplayName = 'Concussion Torpedos',
             EffectiveRadius = 0,
             FireTargetLayerCapsTable = {

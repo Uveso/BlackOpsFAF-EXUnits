@@ -49,6 +49,7 @@ UnitBlueprint {
         'CYBRAN',
         'MOBILE',
         'NAVAL',
+        'HOVER',
         'TECH3',
         'ANTIAIR',
         'DIRECTFIRE',

@@ -1,4 +1,11 @@
-V19 (22.Dec.2020)
+v20 (01.Aug.2022)
+
+- Unit ees0301 (Advanced Tactical Submarine) Changed DamageType for weapon (Concussion Torpedos) from Normal to 'Nuke'.
+- Unit eel0401 (Experimental Harmonic Wave Generator) Added "HOVER" to Categories.
+- Unit ers0302 (Attack Frigate) Added "HOVER" to Categories.
+
+*************************************************************************************************************************************
+v19 (22.Dec.2020)
 
 - Unit EAL0301 Added TeleportDelay = 10, to blueprint to match FAF patch
 

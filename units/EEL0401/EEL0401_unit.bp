@@ -65,6 +65,7 @@ UnitBlueprint {
         'UEF',
         'MOBILE',
         'LAND',
+        'HOVER',
         'EXPERIMENTAL',
         'DIRECTFIRE',
         'ANTIAIR',
