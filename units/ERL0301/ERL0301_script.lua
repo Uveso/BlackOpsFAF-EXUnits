@@ -5,7 +5,7 @@
 --**
 --**  Summary  :  Cybran Rocket Bot Script
 --**
---**  Copyright � 2007 Gas Powered Games, Inc.  All rights reserved.
+--**  Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
 --****************************************************************************
 local CWalkingLandUnit = import('/lua/cybranunits.lua').CWalkingLandUnit
 local CybranWeaponsFile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsweapons.lua')
