@@ -5,7 +5,7 @@
 --**
 --**  Summary  :  Aeon Siege Assault Bot Script
 --**
---**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+--**  Copyright Â© 2005 Gas Powered Games, Inc.  All rights reserved.
 --****************************************************************************
 
 local AWalkingLandUnit = import('/lua/aeonunits.lua').AWalkingLandUnit
@@ -17,6 +17,13 @@ EAL0301 = Class(AWalkingLandUnit) {
     Weapons = {
         FrontTurret01 = Class(ADFReactonCannon) {}
     },
+
+    OnCreate = function(self)
+        AWalkingLandUnit.OnCreate(self)
+
+        -- allow this unit to teleport
+        self:AddCommandCap('RULEUCC_Teleport')
+    end,
 
     OnStopBeingBuilt = function(self,builder,layer)
         AWalkingLandUnit.OnStopBeingBuilt(self,builder,layer)
