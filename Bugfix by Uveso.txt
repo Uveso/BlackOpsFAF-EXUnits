@@ -1,3 +1,10 @@
+v21 (24.Apr.2023)
+Thanks to Jip who provided this patch.
+
+- Unit erl0301 Shadow Splitter - (Cloaked Bot) Fixed cloak
+- Unit eal0301 Faithbreaker - (Teleport Harassment Bot) fixed teleport
+
+*************************************************************************************************************************************
 v20 (01.Aug.2022)
 
 - Unit ees0301 (Advanced Tactical Submarine) Changed DamageType for weapon (Concussion Torpedos) from Normal to 'Nuke'.
