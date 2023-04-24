@@ -159,7 +159,6 @@ UnitBlueprint {
         RadarStealth = true,
         VisionRadius = 32,
         RecloakAfterFiringDelay = 2,
-        FreeIntel = true,
     },
     Interface = {
         HelpText = '<LOC ERL0301_help>Cloaked Bot',

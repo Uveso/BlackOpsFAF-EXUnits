@@ -5,7 +5,7 @@
 --**
 --**  Summary  :  Cybran Rocket Bot Script
 --**
---**  Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+--**  Copyright Â© 2007 Gas Powered Games, Inc.  All rights reserved.
 --****************************************************************************
 local CWalkingLandUnit = import('/lua/cybranunits.lua').CWalkingLandUnit
 local CybranWeaponsFile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsweapons.lua')
@@ -22,29 +22,29 @@ ERL0301 = Class(CWalkingLandUnit) {
             end,
 
             DecloakForTimeout = function(self)
-                self.unit:DisableUnitIntel('Cloak')
+                self.unit:DisableUnitIntel('weaponfire', 'Cloak')
                 WaitSeconds(self.unit:GetBlueprint().Intel.RecloakAfterFiringDelay or 10)
-                self.unit:EnableUnitIntel('Cloak')
+                self.unit:EnableUnitIntel('weaponfire', 'Cloak')
             end,
         },
     },
 
     OnStopBeingBuilt = function(self,builder,layer)
         CWalkingLandUnit.OnStopBeingBuilt(self,builder,layer)
-        --self:SetConsumptionPerSecondEnergy(0)
-        --self:EnableUnitIntel('Cloak')
-        --self:EnableUnitIntel('RadarStealth')
-        --self:SetMaintenanceConsumptionInactive()
+        -- bit hacky, but otherwise the shader doesn't apply properly
+        self:DisableUnitIntel('start', 'Cloak')
+        self:DisableUnitIntel('start', 'RadarStealth')
+        self:EnableUnitIntel('start', 'Cloak')
+        self:EnableUnitIntel('start', 'RadarStealth')
         self.IntelEffectsBag = {}
-        --self:ForkThread(self.OnScriptBitClear)
     end,
 
     OnScriptBitSet = function(self, bit)
         if bit == 8 then -- cloak toggle
             self:StopUnitAmbientSound('ActiveLoop')
             self:SetMaintenanceConsumptionInactive()
-            self:DisableUnitIntel('Cloak')
-            self:DisableUnitIntel('RadarStealth')
+            self:DisableUnitIntel('toggle', 'Cloak')
+            self:DisableUnitIntel('toggle', 'RadarStealth')
         end
     end,
 
@@ -52,8 +52,8 @@ ERL0301 = Class(CWalkingLandUnit) {
         if bit == 8 then -- cloak toggle
             self:PlayUnitAmbientSound('ActiveLoop')
             self:SetMaintenanceConsumptionActive()
-            self:EnableUnitIntel('Cloak')
-            self:EnableUnitIntel('RadarStealth')
+            self:EnableUnitIntel('toggle', 'Cloak')
+            self:EnableUnitIntel('toggle', 'RadarStealth')
         end
     end,
 
@@ -78,8 +78,8 @@ ERL0301 = Class(CWalkingLandUnit) {
         },
     },
 
-    OnIntelEnabled = function(self)
-        CWalkingLandUnit.OnIntelEnabled(self)
+    OnIntelEnabled = function(self, intel)
+        CWalkingLandUnit.OnIntelEnabled(self, intel)
         if self:IsIntelEnabled('Cloak') then
             self:SetMaintenanceConsumptionActive()
             if not self.IntelEffectsBag then
@@ -89,8 +89,8 @@ ERL0301 = Class(CWalkingLandUnit) {
         end
     end,
 
-    OnIntelDisabled = function(self)
-        CWalkingLandUnit.OnIntelDisabled(self)
+    OnIntelDisabled = function(self, intel)
+        CWalkingLandUnit.OnIntelDisabled(self, intel)
         if self.IntelEffectsBag then
             EffectUtil.CleanupEffectBag(self,'IntelEffectsBag')
             self.IntelEffectsBag = nil
