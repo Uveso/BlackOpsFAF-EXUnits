@@ -176,7 +176,7 @@ UnitBlueprint {
         RadarStealth = true,
         RadarStealthField = true,
         RadarStealthFieldRadius = 200,
-        VisionRadius = 27,
+        VisionRadius = 28,
     },
     Interface = {
         HelpText = 'Teleport Harassment Bot',

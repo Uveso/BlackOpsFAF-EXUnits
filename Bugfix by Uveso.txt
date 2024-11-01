@@ -1,3 +1,11 @@
+v22 (02.Nov.2024)
+
+- UEFClusterCruise01_proj.bp fix DesiredShooterCap not matching health
+- fixed VisionRadius, OmniRadius, WaterVisionRadius
+- Unit eeb0402 (Stellar Generator) Fixed collision size (for torpedo hit)
+- fixed cloak ERL0301
+
+*************************************************************************************************************************************
 v21 (24.Apr.2023)
 Thanks to Jip who provided this patch.
 

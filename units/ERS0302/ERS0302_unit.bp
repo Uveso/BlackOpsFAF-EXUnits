@@ -263,7 +263,7 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        OmniRadius = 30,
+        OmniRadius = 32,
         RadarRadius = 100,
         SonarRadius = 100,
         VisionRadius = 32,
