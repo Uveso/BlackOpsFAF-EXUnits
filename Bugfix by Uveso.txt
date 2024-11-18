@@ -1,3 +1,8 @@
+v22 (not released)
+
+Unit eeb0001 (Lambda Emitter) Changed DamageType for weapon (Death Nuke) from Normal to 'Nuke'.
+
+*************************************************************************************************************************************
 v22 (02.Nov.2024)
 
 - UEFClusterCruise01_proj.bp fix DesiredShooterCap not matching health
