@@ -1,26 +1,27 @@
---****************************************************************************
---**
---**  File     :
---**  Author(s):  Tpapp & Exavier Macbeth
---**
---**  Summary  :  UEF T4 Stellar Generator Script
---**
---**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
---****************************************************************************
+--------------------------------------------------------------------------------
+-- Author(s):  Tpapp & Exavier Macbeth
+-- Summary  :  UEF T4 Stellar Generator Script
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
+--------------------------------------------------------------------------------
 
 local TEnergyCreationUnit = import('/lua/terranunits.lua').TEnergyCreationUnit
-local TerranWeaponFile = import('/lua/terranweapons.lua')
 local DeathNukeWeapon = import('/lua/sim/defaultweapons.lua').DeathNukeWeapon
+local TrashBagAdd = TrashBag.Add
 
-
+---@class EEB0402 : TEnergyCreationUnit
 EEB0402 = Class(TEnergyCreationUnit) {
 
     Weapons = {
         DeathWeapon = Class(DeathNukeWeapon) {},
     },
 
+    ---@param self EEB0402
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         TEnergyCreationUnit.OnStopBeingBuilt(self,builder,layer)
+        local trash = self.Trash
+
         self.RotorArms = CreateRotator(self, 'arms', 'y', nil, 0, 16, 45)
         self.RotorRings01 = CreateRotator(self, 'ring01', 'z', nil, 0, 60, 202)
         self.RotorRings02 = CreateRotator(self, 'ring02', 'x', nil, 0, 60, -270)
@@ -29,19 +30,22 @@ EEB0402 = Class(TEnergyCreationUnit) {
         self.RotorSubRings01 = CreateRotator(self, 'ring01_sub', 'x', nil, 0, 12, 30)
         self.RotorSubRings02 = CreateRotator(self, 'ring02_sub', 'y', nil, 0, 12, 30)
         self.RotorSubRings03 = CreateRotator(self, 'ring03_sub', 'z', nil, 0, 12, 30)
-        self.Trash:Add(self.RotorArms)
-        self.Trash:Add(self.RotorRings01)
-        self.Trash:Add(self.RotorRings02)
-        self.Trash:Add(self.RotorRings03A)
-        self.Trash:Add(self.RotorRings03B)
-        self.Trash:Add(self.RotorSubRings01)
-        self.Trash:Add(self.RotorSubRings02)
-        self.Trash:Add(self.RotorSubRings03)
+
+        TrashBagAdd(trash, self.RotorArms)
+        TrashBagAdd(trash, self.RotorRings01)
+        TrashBagAdd(trash, self.RotorRings02)
+        TrashBagAdd(trash, self.RotorRings03A)
+        TrashBagAdd(trash, self.RotorRings03B)
+        TrashBagAdd(trash, self.RotorSubRings01)
+        TrashBagAdd(trash, self.RotorSubRings02)
+        TrashBagAdd(trash, self.RotorSubRings03)
+
         self.StellarCoreTable = {}
         self.UnitComplete = true
-        self:ForkThread(self.InitialSpawnDelay)
+        TrashBagAdd(trash, ForkThread(self.InitialSpawnDelay, self))
     end,
 
+    ---@param self EEB0402
     NotifyOfDroneDeath = function(self)
         ------ Only respawns the drones if the parent unit is not dead
         if not self.Dead then
@@ -62,11 +66,13 @@ EEB0402 = Class(TEnergyCreationUnit) {
         end
     end,
 
+    ---@param self EEB0402
     InitialSpawnDelay = function(self)
         WaitSeconds(2)
         self:ForkThread(self.CoreSpawn)
     end,
 
+    ---@param self EEB0402
     CoreMonitor = function(self)
         self:OnProductionPaused()
         self.RotorRings01:SetTargetSpeed(0)
@@ -84,6 +90,7 @@ EEB0402 = Class(TEnergyCreationUnit) {
         self:OnProductionUnpaused()
     end,
 
+    ---@param self EEB0402
     CoreSpawn = function(self)
         local platOrient = self:GetOrientation()
         local location = self:GetPosition('star')

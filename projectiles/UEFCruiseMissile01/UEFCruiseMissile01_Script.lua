@@ -1,9 +1,7 @@
---
--- Terran Land-Based Cruise Missile
---
 local UEFCruiseMissile01Projectile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsprojectiles.lua').UEFCruiseMissile01Projectile
-local Explosion = import('/lua/defaultexplosions.lua')
 
+-- Terran Land-Based Cruise Missile
+---@class UEFCruiseMissile01 : UEFCruiseMissile01Projectile
 UEFCruiseMissile01 = Class(UEFCruiseMissile01Projectile) {
 
     FxAirUnitHitScale = 1.5,
@@ -18,12 +16,14 @@ UEFCruiseMissile01 = Class(UEFCruiseMissile01Projectile) {
     FxWaterHitScale = 1.5,
     FxOnKilledScale = 1.5,
 
+    ---@param self UEFCruiseMissile01
     OnCreate = function(self)
         UEFCruiseMissile01Projectile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 1.2)
         self:ForkThread(self.CruiseMissileThread)
     end,
 
+    ---@param self UEFCruiseMissile01
     CruiseMissileThread = function(self)
         self:SetTurnRate(180)
         WaitSeconds(2)

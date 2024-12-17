@@ -1,26 +1,20 @@
---****************************************************************************
---**
---**  File     :  /cdimage/units/URS0103/URS0103_script.lua
---**  Author(s):  John Comes, David Tomandl, Jessica St. Croix
---**
---**  Summary  :  Cybran Frigate Script
---**
---**  Copyright © 2006 Gas Powered Games, Inc.  All rights reserved.
---****************************************************************************
+-------------------------------------------------------------------------
+-- File     :  /cdimage/units/URS0103/URS0103_script.lua
+-- Author(s):  John Comes, David Tomandl, Jessica St. Croix
+-- Summary  :  Cybran Frigate Script
+-- Copyright ï¿½ 2006 Gas Powered Games, Inc.  All rights reserved.
+-------------------------------------------------------------------------
 
 local CSeaUnit = import('/lua/cybranunits.lua').CSeaUnit
 local CybranWeaponsFile = import('/lua/cybranweapons.lua')
 local WeaponsFile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsweapons.lua')
-local CAAAutocannon = CybranWeaponsFile.CAAAutocannon
-local CDFProtonCannonWeapon = CybranWeaponsFile.CDFProtonCannonWeapon
 local CANNaniteTorpedoWeapon = import('/lua/cybranweapons.lua').CANNaniteTorpedoWeapon
-local CIFSmartCharge = import('/lua/cybranweapons.lua').CIFSmartCharge
 local CybranAriesBeam = WeaponsFile.CybranAriesBeam
 local CAANanoDartWeapon = import('/lua/cybranweapons.lua').CAANanoDartWeapon
 local HailfireLauncherWeapon = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsweapons.lua').HailfireLauncherWeapon
 local CAMZapperWeapon02 = CybranWeaponsFile.CAMZapperWeapon02
-local EXEffectTemplate = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsEffectTemplates.lua')
 
+---@class ERS0302 : CSeaUnit
 ERS0302 = Class(CSeaUnit) {
     DestructionTicks = 200,
 
@@ -34,17 +28,19 @@ ERS0302 = Class(CSeaUnit) {
         Zapper02 = Class(CAMZapperWeapon02) {},
     },
 
+    ---@param self ERS0302
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         CSeaUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetWeaponEnabledByLabel('HailfireRocket', false)
         if(self:GetCurrentLayer() == 'Land') then
             self.AT1 = self:ForkThread(self.TransformThread, true)
         end
-        --self.Trash:Add(CreateRotator(self, 'Cybran_Radar', 'y', nil, 90, 0, 0))
-        --self.Trash:Add(CreateRotator(self, 'Back_Radar', 'y', nil, -360, 0, 0))
-        --self.Trash:Add(CreateRotator(self, 'Front_Radar', 'y', nil, -180, 0, 0))
     end,
 
+    ---@param self ERS0302
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         CSeaUnit.OnScriptBitSet(self, bit)
         if bit == 1 then
@@ -52,6 +48,8 @@ ERS0302 = Class(CSeaUnit) {
         end
     end,
 
+    ---@param self ERS0302
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         CSeaUnit.OnScriptBitClear(self, bit)
         if bit == 1 then
@@ -59,30 +57,34 @@ ERS0302 = Class(CSeaUnit) {
         end
     end,
 
+    ---@param self ERS0302
     EXOnScriptBitSet = function(self)
-            if(not self.AnimManip2) then
-                self.AnimManip2 = CreateAnimator(self)
-            end
-            self:SetWeaponEnabledByLabel('AAMissile', false)
-            self.AnimManip2:PlayAnim(self:GetBlueprint().Display.AnimationHailfireDeploy)
-            self.AnimManip2:SetRate(0.5)
-            WaitFor(self.AnimManip2)
-            self:SetWeaponEnabledByLabel('HailfireRocket', true)
-            self:GetWeaponManipulatorByLabel('HailfireRocket'):SetHeadingPitch(self:GetWeaponManipulatorByLabel('AAMissile'):GetHeadingPitch())
-            self.Trash:Add(self.AnimManip2)
+        if(not self.AnimManip2) then
+            self.AnimManip2 = CreateAnimator(self)
+        end
+        self:SetWeaponEnabledByLabel('AAMissile', false)
+        self.AnimManip2:PlayAnim(self:GetBlueprint().Display.AnimationHailfireDeploy)
+        self.AnimManip2:SetRate(0.5)
+        WaitFor(self.AnimManip2)
+        self:SetWeaponEnabledByLabel('HailfireRocket', true)
+        self:GetWeaponManipulatorByLabel('HailfireRocket'):SetHeadingPitch(self:GetWeaponManipulatorByLabel('AAMissile'):GetHeadingPitch())
+        self.Trash:Add(self.AnimManip2)
     end,
 
+    ---@param self ERS0302
     EXOnScriptBitClear = function(self)
-            self:SetWeaponEnabledByLabel('HailfireRocket', false)
-            self.AnimManip2:PlayAnim(self:GetBlueprint().Display.AnimationHailfireDeploy)
-            self.AnimManip2:SetAnimationFraction(1)
-            self.AnimManip2:SetRate(-0.5)
-            WaitFor(self.AnimManip2)
-            self:SetWeaponEnabledByLabel('AAMissile', true)
-            self:GetWeaponManipulatorByLabel('AAMissile'):SetHeadingPitch(self:GetWeaponManipulatorByLabel('HailfireRocket'):GetHeadingPitch())
-            --self.AnimManip2:Destroy()
+        self:SetWeaponEnabledByLabel('HailfireRocket', false)
+        self.AnimManip2:PlayAnim(self:GetBlueprint().Display.AnimationHailfireDeploy)
+        self.AnimManip2:SetAnimationFraction(1)
+        self.AnimManip2:SetRate(-0.5)
+        WaitFor(self.AnimManip2)
+        self:SetWeaponEnabledByLabel('AAMissile', true)
+        self:GetWeaponManipulatorByLabel('AAMissile'):SetHeadingPitch(self:GetWeaponManipulatorByLabel('HailfireRocket'):GetHeadingPitch())
     end,
 
+    ---@param self ERS0302
+    ---@param new HorizontalMovementState
+    ---@param old HorizontalMovementState
     OnMotionHorzEventChange = function(self, new, old)
         CSeaUnit.OnMotionHorzEventChange(self, new, old)
         if self.Dead then return end
@@ -102,6 +104,9 @@ ERS0302 = Class(CSeaUnit) {
         end
     end,
 
+    ---@param self ERS0302
+    ---@param new VerticalMovementState
+    ---@param old VerticalMovementState
     OnLayerChange = function(self, new, old)
         CSeaUnit.OnLayerChange(self, new, old)
         if(old != 'None') then
@@ -118,6 +123,8 @@ ERS0302 = Class(CSeaUnit) {
         end
     end,
 
+    ---@param self ERS0302
+    ---@param land boolean
     TransformThread = function(self, land)
         if(not self.AnimManip) then
             self.AnimManip = CreateAnimator(self)
@@ -165,6 +172,10 @@ ERS0302 = Class(CSeaUnit) {
         end
     end,
 
+    ---@param self ERS0302
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         self.Trash:Destroy()
         self.Trash = TrashBag()
@@ -176,6 +187,8 @@ ERS0302 = Class(CSeaUnit) {
         CSeaUnit.OnKilled(self, instigator, type, overkillRatio)
     end,
 
+    ---@param self ERS0302
+    ---@param overkillRatio number
     DeathThread = function(self, overkillRatio)
         if (self:GetCurrentLayer() != 'Water') then
             self:PlayUnitSound('Destroyed')
@@ -211,7 +224,6 @@ ERS0302 = Class(CSeaUnit) {
             CSeaUnit.DeathThread(self, overkillRatio)
         end
     end,
-
 }
 
 TypeClass = ERS0302

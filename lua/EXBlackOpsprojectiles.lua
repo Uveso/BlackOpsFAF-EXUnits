@@ -5,7 +5,7 @@
 --**
 --**  Summary  :
 --**
---**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+--**  Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 --****************************************************************************
 --------------------------------------------------------------------------
 --  Lt_hawkeye's Custom Projectiles
@@ -13,26 +13,18 @@
 local Projectile = import('/lua/sim/projectile.lua').Projectile
 local DefaultProjectileFile = import('/lua/sim/defaultprojectiles.lua')
 local EmitterProjectile = DefaultProjectileFile.EmitterProjectile
-local OnWaterEntryEmitterProjectile = DefaultProjectileFile.OnWaterEntryEmitterProjectile
 local SingleBeamProjectile = DefaultProjectileFile.SingleBeamProjectile
 local SinglePolyTrailProjectile = DefaultProjectileFile.SinglePolyTrailProjectile
 local MultiPolyTrailProjectile = DefaultProjectileFile.MultiPolyTrailProjectile
-local SingleCompositeEmitterProjectile = DefaultProjectileFile.SingleCompositeEmitterProjectile
-local MultiCompositeEmitterProjectile = DefaultProjectileFile.MultiCompositeEmitterProjectile
-local Explosion = import('/lua/defaultexplosions.lua')
 local EffectTemplate = import('/lua/EffectTemplates.lua')
-local DepthCharge = import('/lua/defaultantiprojectile.lua').DepthCharge
-local util = import('/lua/utilities.lua')
 local EXEffectTemplate = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsEffectTemplates.lua')
 
------------------------------------------------------------------
 -- Null Shell
------------------------------------------------------------------
+---@class EXNullShell : Projectile
 EXNullShell = Class(Projectile) {}
 
------------------------------------------------------------------
 -- PROJECTILE WITH ATTACHED EFFECT EMITTERS
------------------------------------------------------------------
+---@class EXEmitterProjectile : Projectile
 EXEmitterProjectile = Class(Projectile) {
     FxTrails = {'/effects/emitters/missile_munition_trail_01_emit.bp',},
     FxTrailScale = 1,
@@ -40,16 +32,15 @@ EXEmitterProjectile = Class(Projectile) {
 
     OnCreate = function(self)
         Projectile.OnCreate(self)
-        local army = self:GetArmy()
+        local army = self.Army
         for i in self.FxTrails do
             CreateEmitterOnEntity(self, army, self.FxTrails[i]):ScaleEmitter(self.FxTrailScale):OffsetEmitter(0, 0, self.FxTrailOffset)
         end
     end,
 }
 
------------------------------------------------------------------
 -- BEAM PROJECTILES
------------------------------------------------------------------
+---@class EXSingleBeamProjectile : EXEmitterProjectile
 EXSingleBeamProjectile = Class(EXEmitterProjectile) {
 
     BeamName = '/effects/emitters/default_beam_01_emit.bp',
@@ -58,11 +49,12 @@ EXSingleBeamProjectile = Class(EXEmitterProjectile) {
     OnCreate = function(self)
         EmitterProjectile.OnCreate(self)
         if self.BeamName then
-            CreateBeamEmitterOnEntity(self, -1, self:GetArmy(), self.BeamName)
+            CreateBeamEmitterOnEntity(self, -1, self.Army, self.BeamName)
         end
     end,
 }
 
+---@class EXMultiBeamProjectile : EXEmitterProjectile
 EXMultiBeamProjectile = Class(EXEmitterProjectile) {
 
     Beams = {'/effects/emitters/default_beam_01_emit.bp',},
@@ -70,17 +62,15 @@ EXMultiBeamProjectile = Class(EXEmitterProjectile) {
 
     OnCreate = function(self)
         EmitterProjectile.OnCreate(self)
-        local beam = nil
-        local army = self:GetArmy()
-        for k, v in self.Beams do
+        local army = self.Army
+        for _, v in self.Beams do
             CreateBeamEmitterOnEntity(self, -1, army, v)
         end
     end,
 }
 
------------------------------------------------------------------
 -- POLY-TRAIL PROJECTILES
------------------------------------------------------------------
+---@class EXSinglePolyTrailProjectile : EXEmitterProjectile
 EXSinglePolyTrailProjectile = Class(EXEmitterProjectile) {
 
     PolyTrail = '/effects/emitters/test_missile_trail_emit.bp',
@@ -90,11 +80,12 @@ EXSinglePolyTrailProjectile = Class(EXEmitterProjectile) {
     OnCreate = function(self)
         EmitterProjectile.OnCreate(self)
         if self.PolyTrail != '' then
-            CreateTrail(self, -1, self:GetArmy(), self.PolyTrail):OffsetEmitter(0, 0, self.PolyTrailOffset)
+            CreateTrail(self, -1, self.Army, self.PolyTrail):OffsetEmitter(0, 0, self.PolyTrailOffset)
         end
     end,
 }
 
+---@class EXMultiPolyTrailProjectile : EXEmitterProjectile
 EXMultiPolyTrailProjectile = Class(EXEmitterProjectile) {
 
     PolyTrailOffset = {0},
@@ -105,7 +96,7 @@ EXMultiPolyTrailProjectile = Class(EXEmitterProjectile) {
         EmitterProjectile.OnCreate(self)
         if self.PolyTrails then
             local NumPolyTrails = table.getn(self.PolyTrails)
-            local army = self:GetArmy()
+            local army = self.Army
 
             if self.RandomPolyTrails != 0 then
                 local index = nil
@@ -129,6 +120,7 @@ EXMultiPolyTrailProjectile = Class(EXEmitterProjectile) {
 -----------------------------------------------------------------
 
 -- LIGHTWEIGHT VERSION THAT LIMITS USE TO 1 BEAM, 1 POLYTRAIL, AND STANDARD EMITTERS
+---@class EXSingleCompositeEmitterProjectile : EXSinglePolyTrailProjectile
 EXSingleCompositeEmitterProjectile = Class(EXSinglePolyTrailProjectile) {
 
     BeamName = '/effects/emitters/default_beam_01_emit.bp',
@@ -137,12 +129,13 @@ EXSingleCompositeEmitterProjectile = Class(EXSinglePolyTrailProjectile) {
     OnCreate = function(self)
         SinglePolyTrailProjectile.OnCreate(self)
         if self.BeamName != '' then
-            CreateBeamEmitterOnEntity(self, -1, self:GetArmy(), self.BeamName)
+            CreateBeamEmitterOnEntity(self, -1, self.Army, self.BeamName)
         end
     end,
 }
 
 -- HEAVYWEIGHT VERSION, ALLOWS FOR MULTIPLE BEAMS, POLYTRAILS, AND STANDARD EMITTERS
+---@class EXMultiCompositeEmitterProjectile : EXMultiPolyTrailProjectile
 EXMultiCompositeEmitterProjectile = Class(EXMultiPolyTrailProjectile) {
 
     Beams = {'/effects/emitters/default_beam_01_emit.bp',},
@@ -152,18 +145,15 @@ EXMultiCompositeEmitterProjectile = Class(EXMultiPolyTrailProjectile) {
 
     OnCreate = function(self)
         MultiPolyTrailProjectile.OnCreate(self)
-        local beam = nil
-        local army = self:GetArmy()
-        for k, v in self.Beams do
+        local army = self.Army
+        for _, v in self.Beams do
             CreateBeamEmitterOnEntity(self, -1, army, v)
         end
     end,
 }
 
---------------------------------------------------------------------------
 --  Custom Projectiles
---------------------------------------------------------------------------
-
+---@class EXBlackOpsNukeProjectile : SingleBeamProjectile
 UEFClusterCruise01Projectile = Class(SingleBeamProjectile) {
     DestroyOnImpact = false,
     FxTrails = EXEffectTemplate.UEFCruiseMissile01Trails,
@@ -176,14 +166,20 @@ UEFClusterCruise01Projectile = Class(SingleBeamProjectile) {
     FxImpactProp = EffectTemplate.TMissileHit01,
     FxImpactUnderWater = {},
 
+    ---@param self EXBlackOpsNukeProjectile
+    ---@param targetType string
+    ---@param targetEntity Entity
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
         SingleBeamProjectile.OnImpact(self, targetType, targetEntity)
     end,
 
+    ---@param self EXBlackOpsNukeProjectile
+    ---@param army Army
+    ---@param EffectTable table
+    ---@param EffectScale number
     CreateImpactEffects = function(self, army, EffectTable, EffectScale)
         local emit = nil
-        for k, v in EffectTable do
+        for _, v in EffectTable do
             emit = CreateEmitterAtEntity(self,army,v)
             if emit and EffectScale != 1 then
                 emit:ScaleEmitter(EffectScale or 1)
@@ -192,6 +188,7 @@ UEFClusterCruise01Projectile = Class(SingleBeamProjectile) {
     end,
 }
 
+---@class EXBlackOpsNukeProjectile : SinglePolyTrailProjectile
 UEFHeavyPlasmaGatlingCannon01 = Class(SinglePolyTrailProjectile) {
     FxImpactTrajectoryAligned = false,
     FxImpactUnit = EffectTemplate.THeavyPlasmaGatlingCannonHit,
@@ -204,8 +201,8 @@ UEFHeavyPlasmaGatlingCannon01 = Class(SinglePolyTrailProjectile) {
     PolyTrail = EffectTemplate.THeavyPlasmaGatlingCannonPolyTrail,
 }
 
+---@class EXBlackOpsNukeProjectile : EmitterProjectile
 UEFHVM01Projectile = Class(EmitterProjectile) {
--- Emitter Values
     FxInitial = {},
     TrailDelay = 0.3,
     FxTrails = EXEffectTemplate.UEFHVM01Trails,
@@ -223,6 +220,7 @@ UEFHVM01Projectile = Class(EmitterProjectile) {
     FxImpactUnderWater = {},
 }
 
+---@class UEFCruiseMissile01Projectile : SingleBeamProjectile
 UEFCruiseMissile01Projectile = Class(SingleBeamProjectile) {
     DestroyOnImpact = false,
     FxTrails = EXEffectTemplate.UEFCruiseMissile01Trails,
@@ -235,14 +233,20 @@ UEFCruiseMissile01Projectile = Class(SingleBeamProjectile) {
     FxImpactProp = EffectTemplate.TMissileHit01,
     FxImpactUnderWater = {},
 
+    ---@param self UEFCruiseMissile01Projectile
+    ---@param targetType string
+    ---@param targetEntity Entity
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
         SingleBeamProjectile.OnImpact(self, targetType, targetEntity)
     end,
 
+    ---@param self UEFCruiseMissile01Projectile
+    ---@param army Army
+    ---@param EffectTable table
+    ---@param EffectScale number
     CreateImpactEffects = function(self, army, EffectTable, EffectScale)
         local emit = nil
-        for k, v in EffectTable do
+        for _, v in EffectTable do
             emit = CreateEmitterAtEntity(self,army,v)
             if emit and EffectScale != 1 then
                 emit:ScaleEmitter(EffectScale or 1)
@@ -251,9 +255,8 @@ UEFCruiseMissile01Projectile = Class(SingleBeamProjectile) {
     end,
 }
 
---------------------------------------------------------------------------
 --  AEON RAIDER CANNON PROJECTILES
---------------------------------------------------------------------------
+---@class RaiderCannonProjectile : SinglePolyTrailProjectile
 RaiderCannonProjectile = Class(SinglePolyTrailProjectile) {
     FxTrails = {
         '/effects/emitters/reacton_cannon_fxtrail_01_emit.bp',
@@ -269,11 +272,9 @@ RaiderCannonProjectile = Class(SinglePolyTrailProjectile) {
     FxImpactLand = EffectTemplate.AReactonCannonHitLand01,
 }
 
---------------------------------------------------------------------------
 --  Cybran Hailfire Projectiles
---------------------------------------------------------------------------
+---@class CybranHailfire01Projectile : SinglePolyTrailProjectile
 CybranHailfire01ChildProjectile = Class(SinglePolyTrailProjectile) {
-    --FxTrails = {},
     PolyTrail = '/effects/emitters/default_polytrail_05_emit.bp',
     FxTrails = EXEffectTemplate.CybranHailfire02FXTrails,
     FxTrailOffset = -0.3,
@@ -291,15 +292,11 @@ CybranHailfire01ChildProjectile = Class(SinglePolyTrailProjectile) {
     FxPropHitScale = 4,
     FxWaterHitScale = 4,
     FxShieldHitScale = 2,
-
-    -- No damage dealt by this child.
-    --DoDamage = function(self, instigator, damageData, targetEntity)
-    --end,
 }
 
+---@class CybranHailfire01Projectile : SinglePolyTrailProjectile
 CybranHailfire02Projectile = Class(SinglePolyTrailProjectile) {
     FxTrails = EXEffectTemplate.CybranHailfire01FXTrails,
-    --PolyTrail = '/effects/emitters/default_polytrail_05_emit.bp',
     FxTrailOffset = -0.3,
     FxTrailScale = 0.05,
     FxImpactTrajectoryAligned = false,
@@ -308,7 +305,6 @@ CybranHailfire02Projectile = Class(SinglePolyTrailProjectile) {
 
     -- Hit Effects
     FxImpactProp = EffectTemplate.CNanoDartUnitHit01,
-    FxImpactWater = EffectTemplate.CNanoDartUnitHit01,
     FxImpactUnit = EffectTemplate.CNanoDartUnitHit01,
     FxImpactLand = EffectTemplate.CNanoDartLandHit01,
     FxImpactShield = EffectTemplate.CNanoDartLandHit01,

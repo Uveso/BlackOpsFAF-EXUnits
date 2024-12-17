@@ -1,17 +1,13 @@
---****************************************************************************
---**
---**  File     :  /cdimage/units/UES0304/UES0304_script.lua
---**  Author(s):  John Comes, David Tomandl
---**
---**  Summary  :  UEF Strategic Missile Submarine Script
---**
---**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
---****************************************************************************
+-------------------------------------------------------------------------
+-- File     :  /cdimage/units/UES0304/UES0304_script.lua
+-- Author(s):  John Comes, David Tomandl
+-- Summary  :  UEF Strategic Missile Submarine Script
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
+-------------------------------------------------------------------------
 
 local TSubUnit = import('/lua/terranunits.lua').TSubUnit
 local WeaponFile = import('/lua/terranweapons.lua')
 local TIFCruiseMissileLauncherSub = WeaponFile.TIFCruiseMissileLauncherSub
-local TIFStrategicMissileWeapon = WeaponFile.TIFStrategicMissileWeapon
 local TANTorpedoAngler = import('/lua/terranweapons.lua').TANTorpedoAngler
 local TSAMLauncher = import('/lua/terranweapons.lua').TSAMLauncher
 local TDFHeavyPlasmaCannonWeapon = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsweapons.lua').UEFACUHeavyPlasmaGatlingCannonWeapon
@@ -19,6 +15,7 @@ local TIFCruiseMissileLauncher = WeaponFile.TIFCruiseMissileLauncher
 local EffectUtils = import('/lua/effectutilities.lua')
 local Effects = import('/lua/effecttemplates.lua')
 
+---@class EES0301 : TSubUnit
 EES0301 = Class(TSubUnit) {
     DeathThreadDestructionWaitTime = 0,
     Weapons = {
@@ -55,6 +52,9 @@ EES0301 = Class(TSubUnit) {
         TacticalNuke = Class(TIFCruiseMissileLauncher) {},
     },
 
+    ---@param self EES0301
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         TSubUnit.OnStopBeingBuilt(self,builder,layer)
         if layer == 'Water' then
@@ -68,6 +68,9 @@ EES0301 = Class(TSubUnit) {
         end
     end,
 
+    ---@param self EES0301
+    ---@param new string
+    ---@param old string
     OnLayerChange = function(self, new, old)
         TSubUnit.OnLayerChange(self, new, old)
         if new == 'Water' then

@@ -1,9 +1,6 @@
 ----------------------------------------------------------------------------
---
---  Author(s):  Exavier Macbeth
---
---  Summary  :  UEF Disruptor
---
+-- Author(s):  Exavier Macbeth
+-- Summary  :  UEF Disruptor
 ----------------------------------------------------------------------------
 
 local TMobileFactoryUnit = import('/lua/terranunits.lua').TMobileFactoryUnit
@@ -11,6 +8,7 @@ local WeaponsFile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsweapons.lua'
 local SonicDisruptorWave = WeaponsFile.SonicDisruptorWave
 local TSAMLauncher = import('/lua/terranweapons.lua').TSAMLauncher
 
+---@class EEL0401 : TMobileFactoryUnit
 EEL0401 = Class(TMobileFactoryUnit) {
     Weapons = {
         EXDisruptorWave = Class(SonicDisruptorWave) {
@@ -71,6 +69,9 @@ EEL0401 = Class(TMobileFactoryUnit) {
         HVMTurret = Class(TSAMLauncher) {},
     },
 
+    ---@param self EEL0401
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         TMobileFactoryUnit.OnStopBeingBuilt(self,builder,layer)
         -- If created with F2 on Water, then play the transform anim.
@@ -79,6 +80,9 @@ EEL0401 = Class(TMobileFactoryUnit) {
         end
     end,
 
+    ---@param self EEL0401
+    ---@param new string
+    ---@param old string
     OnLayerChange = function(self, new, old)
         TMobileFactoryUnit.OnLayerChange(self, new, old)
         if(old ~= 'None') then
@@ -86,7 +90,6 @@ EEL0401 = Class(TMobileFactoryUnit) {
                 self.AT1:Destroy()
                 self.AT1 = nil
             end
-            local myBlueprint = self:GetBlueprint()
             if(new == 'Water') then
                 self.AT1 = self:ForkThread(self.TransformThread, true)
             elseif(new == 'Land') then
@@ -95,35 +98,32 @@ EEL0401 = Class(TMobileFactoryUnit) {
         end
     end,
 
+    ---@param self EEL0401
+    ---@param Water boolean
     TransformThread = function(self, Water)
         if(not self.AnimManip) then
             self.AnimManip = CreateAnimator(self)
         end
-        local bp = self:GetBlueprint()
-        local scale = bp.Display.UniformScale or 1
+        local bp = self.Blueprint
 
         if(Water) then
             -- Change movement speed to the multiplier in blueprint
-            --self:SetSpeedMult(bp.Physics.LandSpeedMultiplier)
             self:SetImmobile(true)
-            self.AnimManip:PlayAnim(self:GetBlueprint().Display.AnimationTransform)
+            self.AnimManip:PlayAnim(bp.Display.AnimationTransform)
             self.AnimManip:SetRate(0.5)
             self.IsWaiting = true
             WaitFor(self.AnimManip)
-            --self:SetCollisionShape('Box', bp.CollisionOffsetX or 0,(bp.CollisionOffsetY + (bp.SizeY*1.0)) or 0,bp.CollisionOffsetZ or 0, bp.SizeX * scale, bp.SizeY * scale, bp.SizeZ * scale)
             self.IsWaiting = false
             self:SetImmobile(false)
             self.Trash:Add(self.AnimManip)
         else
             self:SetImmobile(true)
             -- Revert speed to maximum speed
-            --self:SetSpeedMult(1)
-            self.AnimManip:PlayAnim(self:GetBlueprint().Display.AnimationTransform)
+            self.AnimManip:PlayAnim(bp.Display.AnimationTransform)
             self.AnimManip:SetAnimationFraction(1)
             self.AnimManip:SetRate(-0.5)
             self.IsWaiting = true
             WaitFor(self.AnimManip)
-            --self:SetCollisionShape('Box', bp.CollisionOffsetX or 0,(bp.CollisionOffsetY + (bp.SizeY * 0.5)) or 0,bp.CollisionOffsetZ or 0, bp.SizeX * scale, bp.SizeY * scale, bp.SizeZ * scale)
             self.IsWaiting = false
             self.AnimManip:Destroy()
             self.AnimManip = nil

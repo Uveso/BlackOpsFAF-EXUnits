@@ -12,6 +12,7 @@ local CybranWeaponsFile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsweapon
 local CybranShadowSplitterBeam = CybranWeaponsFile.CybranShadowSplitterBeam
 local EffectUtil = import('/lua/EffectUtilities.lua')
 
+---@class ERl0301 : CWalkingLandUnit
 ERL0301 = Class(CWalkingLandUnit) {
     Weapons = {
         MainGun = Class(CybranShadowSplitterBeam) {
@@ -29,6 +30,9 @@ ERL0301 = Class(CWalkingLandUnit) {
         },
     },
 
+    ---@param self ERl0301
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         CWalkingLandUnit.OnStopBeingBuilt(self,builder,layer)
         -- bit hacky, but otherwise the shader doesn't apply properly
@@ -39,6 +43,8 @@ ERL0301 = Class(CWalkingLandUnit) {
         self.IntelEffectsBag = {}
     end,
 
+    ---@param self ERL0301
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         if bit == 8 then -- cloak toggle
             self:StopUnitAmbientSound('ActiveLoop')
@@ -48,6 +54,8 @@ ERL0301 = Class(CWalkingLandUnit) {
         end
     end,
 
+    ---@param self ERL0301
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         if bit == 8 then -- cloak toggle
             self:PlayUnitAmbientSound('ActiveLoop')
@@ -78,6 +86,8 @@ ERL0301 = Class(CWalkingLandUnit) {
         },
     },
 
+    ---@param self ERL0301
+    ---@param intel string
     OnIntelEnabled = function(self, intel)
         CWalkingLandUnit.OnIntelEnabled(self, intel)
         if self:IsIntelEnabled('Cloak') then
@@ -89,6 +99,8 @@ ERL0301 = Class(CWalkingLandUnit) {
         end
     end,
 
+    ---@param self ERL0301
+    ---@param intel string
     OnIntelDisabled = function(self, intel)
         CWalkingLandUnit.OnIntelDisabled(self, intel)
         if self.IntelEffectsBag then
