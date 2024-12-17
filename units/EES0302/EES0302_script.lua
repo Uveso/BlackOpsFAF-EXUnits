@@ -5,7 +5,7 @@
 --**
 --**  Summary  :  UEF Frigate Script
 --**
---**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+--**  Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 --****************************************************************************
 local TSeaUnit = import('/lua/terranunits.lua').TSeaUnit
 local Entity = import('/lua/sim/Entity.lua').Entity
@@ -15,6 +15,7 @@ local TIFCruiseMissileLauncherSub = import('/lua/terranweapons.lua').TIFCruiseMi
 local TAMPhalanxWeapon = import('/lua/terranweapons.lua').TAMPhalanxWeapon
 local TAAFlakArtilleryCannon = import('/lua/terranweapons.lua').TAAFlakArtilleryCannon
 
+---@class EES0302 : TSeaUnit
 EES0302 = Class(TSeaUnit) {
 
     Weapons = {
@@ -27,12 +28,15 @@ EES0302 = Class(TSeaUnit) {
         AAFlakAft = Class(TAAFlakArtilleryCannon) {},
     },
 
+    ---@param self EES0302
     OnCreate = function(self)
         TSeaUnit.OnCreate(self)
         self:SetWeaponEnabledByLabel('AAFlakFore', false)
         self:SetWeaponEnabledByLabel('AAFlakAft', false)
     end,
 
+    ---@param self EES0302
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         TSeaUnit.OnScriptBitSet(self, bit)
         if bit == 1 then
@@ -45,6 +49,8 @@ EES0302 = Class(TSeaUnit) {
         end
     end,
 
+    ---@param self EES0302
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         TSeaUnit.OnScriptBitClear(self, bit)
         if bit == 1 then

@@ -1,27 +1,22 @@
---****************************************************************************
---**
---**  File     :  /lua/defaultcollisionbeams.lua
---**  Author(s):  Gordon Duclos
---**
---**  Summary  :  Default definitions collision beams
---**
---**  Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
---****************************************************************************
-
+------------------------------------------------------------------------
+-- File     :  /lua/defaultcollisionbeams.lua
+-- Author(s):  Gordon Duclos
+-- Summary  :  Default definitions collision beams
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
+-----------------------------------------------------------------------
 local CollisionBeam = import('/lua/sim/CollisionBeam.lua').CollisionBeam
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local Util = import('/lua/utilities.lua')
-local EffectTemplate2 = import('/mods/BlackOpsFAF-EXUnits/lua/EXEffectTemplates.lua')
 local EXEffectTemplate = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsEffectTemplates.lua')
-
 local EXCollisionBeam = import('/mods/BlackOpsFAF-EXUnits/lua/EXCollisionBeam.lua').CollisionBeam
 
--------------------------------
---   Base class that defines supreme commander specific defaults
--------------------------------
+local TrashBagAdd = TrashBag.Add
+
+--- Base class that defines supreme commander specific defaults
+---@class SCCollisionBeam : CollisionBeam
 SCCollisionBeam = Class(CollisionBeam) {
     FxImpactUnit = EffectTemplate.DefaultProjectileLandUnitImpact,
-    FxImpactLand = {},--EffectTemplate.DefaultProjectileLandImpact,
+    FxImpactLand = {},
     FxImpactWater = EffectTemplate.DefaultProjectileWaterImpact,
     FxImpactUnderWater = EffectTemplate.DefaultProjectileUnderWaterImpact,
     FxImpactAirUnit = EffectTemplate.DefaultProjectileAirUnitImpact,
@@ -30,12 +25,9 @@ SCCollisionBeam = Class(CollisionBeam) {
     FxImpactNone = {},
 }
 
--------------------------------
---   UEF Sonic Disruptor Wave
--------------------------------
+--- UEF Sonic Disruptor Wave
+---@class SonicDisruptorWaveCBeam : EXCollisionBeam
 SonicDisruptorWaveCBeam = Class(EXCollisionBeam) {
-    FxBeam = {},
-
     TerrainImpactType = 'LargeBeam02',
 
     FxBeamStartPoint = EXEffectTemplate.SonicDisruptorWaveMuzzle,
@@ -48,11 +40,10 @@ SonicDisruptorWaveCBeam = Class(EXCollisionBeam) {
 
     SplatTexture = 'czar_mark01_albedo',
     ScorchSplatDropTime = 0.25,
-
 }
 
+---@class CybranBeamWeapons : SCCollisionBeam
 CybranBeamWeapons = Class(SCCollisionBeam) {
-
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 1,
     FxBeamStartPoint = EffectTemplate.CMicrowaveLaserMuzzle01,
@@ -61,10 +52,14 @@ CybranBeamWeapons = Class(SCCollisionBeam) {
     SplatTexture = 'czar_mark01_albedo',
     ScorchSplatDropTime = 0.25,
 
+    ---@param self CybranBeamWeapons
+    ---@param impactType string
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
+        local trash = self.Trash
         if impactType == 'Terrain' then
             if self.Scorching == nil then
-                self.Scorching = self:ForkThread(self.ScorchThread)
+                self.Scorching = TrashBagAdd(trash, ForkThread(self.ScorchThread, self))
             end
         elseif not impactType == 'Unit' then
             KillThread(self.Scorching)
@@ -73,14 +68,16 @@ CybranBeamWeapons = Class(SCCollisionBeam) {
         CollisionBeam.OnImpact(self, impactType, targetEntity)
     end,
 
+    ---@param self CybranBeamWeapons
     OnDisable = function(self)
         CollisionBeam.OnDisable(self)
         KillThread(self.Scorching)
         self.Scorching = nil
     end,
 
+    ---@param self CybranBeamWeapons
     ScorchThread = function(self)
-        local army = self:GetArmy()
+        local army = self.Army
         local size = 0.5 + (Random() * 1.5)
         local CurrentPosition = self:GetPosition(1)
         local LastPosition = Vector(0,0,0)
@@ -101,6 +98,7 @@ CybranBeamWeapons = Class(SCCollisionBeam) {
     end,
 }
 
+---@class CybranSSBeam : CybranBeamWeapons
 CybranSSBeam = Class(CybranBeamWeapons) {
     TerrainImpactScale = 0.25,
     FxBeamStartPoint = EffectTemplate.CMicrowaveLaserMuzzle01,
@@ -110,6 +108,7 @@ CybranSSBeam = Class(CybranBeamWeapons) {
     FxBeamEndPointScale = 0.5,
 }
 
+---@class CybranAriesBeam01 : CybranBeamWeapons
 CybranAriesBeam01 = Class(CybranBeamWeapons) {
     TerrainImpactScale = 0.5,
     FxBeamStartPoint = EffectTemplate.CMicrowaveLaserMuzzle01,

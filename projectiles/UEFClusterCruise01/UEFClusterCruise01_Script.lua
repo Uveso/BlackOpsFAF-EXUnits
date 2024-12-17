@@ -1,7 +1,7 @@
 local UEFClusterCruise01Projectile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsprojectiles.lua').UEFClusterCruise01Projectile
 local EffectTemplate = import('/lua/EffectTemplates.lua')
-local SingleBeamProjectile = import('/lua/sim/defaultprojectiles.lua').SingleBeamProjectile
 
+---@class UEFClusterCruise01 : UEFClusterCruise01Projectile
 UEFClusterCruise01 = Class(UEFClusterCruise01Projectile) {
 
     FxImpactUnit = EffectTemplate.TMissileHit01,
@@ -19,12 +19,14 @@ UEFClusterCruise01 = Class(UEFClusterCruise01Projectile) {
     FxWaterHitScale = 1,
     FxOnKilledScale = 1,
 
+    ---@param self UEFClusterCruise01
     OnCreate = function(self)
         UEFClusterCruise01Projectile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 1.2)
         self:ForkThread(self.CruiseMissileThread)
     end,
 
+    ---@param self UEFClusterCruise01
     CruiseMissileThread = function(self)
         self:SetTurnRate(180)
         WaitSeconds(2)
@@ -33,12 +35,7 @@ UEFClusterCruise01 = Class(UEFClusterCruise01Projectile) {
         self:SetTurnRate(360)
     end,
 
-    --OnImpact = function(self, targetType, targetEntity)
-    --    local army = self:GetArmy()
-     --   CreateLightParticle(self, -1, army, 3, 4, 'glow_03', 'ramp_fire_01')
-     --   SingleBeamProjectile.OnImpact(self, targetType, targetEntity)
-    --end,
-
+    ---@param self UEFClusterCruise01
     OnExitWater = function(self)
         UEFClusterCruise01Projectile.OnExitWater(self)
         self:SetDestroyOnWater(true)

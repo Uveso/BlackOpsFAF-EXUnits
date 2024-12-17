@@ -1,24 +1,21 @@
---
--- Cybran Anti Air Projectile
---
-
 local CybranHailfire02Projectile = import('/mods/BlackOpsFAF-EXUnits/lua/EXBlackOpsprojectiles.lua').CybranHailfire02Projectile
-local TMissileCruiseProjectile = import('/mods/BlackOpsFAF-ACUs/lua/EXBlackOpsprojectiles.lua').UEFACUClusterMIssileProjectile
-local Explosion = import('/lua/defaultexplosions.lua')
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
-local VizMarker = import('/lua/sim/VizMarker.lua').VizMarker
 
+-- Cybran Anti Air Projectile
+---@class CAANanoDart02 : CybranHailfire02Projectile
 CAANanoDart02 = Class(CybranHailfire02Projectile) {
 
-   OnCreate = function(self)
+    ---@param self CAANanoDart02
+    OnCreate = function(self)
         CybranHailfire02Projectile.OnCreate(self)
         for k, v in self.FxTrails do
-            CreateEmitterOnEntity(self,self:GetArmy(),v)
+            CreateEmitterOnEntity(self,self.Army,v)
         end
         self.MoveThread = self:ForkThread(self.MovementThread)
-   end,
+    end,
 
+    ---@param self CAANanoDart02
     MovementThread = function(self)
         self.WaitTime = 0.1
         --self:SetTurnRate(8)
@@ -29,6 +26,7 @@ CAANanoDart02 = Class(CybranHailfire02Projectile) {
         end
     end,
 
+    ---@param self CAANanoDart02
     SetTurnRateByDist = function(self)
         --local dist = self:GetDistanceToTarget()
         local dist = VDist3(self:GetPosition(), self:GetCurrentTargetPosition())

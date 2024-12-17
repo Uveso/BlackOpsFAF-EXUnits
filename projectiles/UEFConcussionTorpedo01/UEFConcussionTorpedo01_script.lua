@@ -1,9 +1,10 @@
---
--- Terran Torpedo Bomb
---
 local TTorpedoSubProjectile = import('/lua/terranprojectiles.lua').TTorpedoSubProjectile
 
+-- Terran Torpedo Bomb
+---@class UEFConcussionTorpedo01 : TTorpedoSubProjectile
 UEFConcussionTorpedo01 = Class(TTorpedoSubProjectile) {
+
+    ---@param self UEFConcussionTorpedo01
     OnCreate = function(self)
         TTorpedoSubProjectile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 1)
@@ -13,7 +14,8 @@ UEFConcussionTorpedo01 = Class(TTorpedoSubProjectile) {
         end
     end,
 
-    MyTargetRangeCheck = function(self, TargetType, TargetEntity)
+    ---@param self UEFConcussionTorpedo01
+    MyTargetRangeCheck = function(self)
         local mytarget = self:GetTrackingTarget()
         local targetpos = mytarget:GetPosition()
         local mypos = self:GetPosition()
@@ -27,6 +29,9 @@ UEFConcussionTorpedo01 = Class(TTorpedoSubProjectile) {
         end
     end,
 
+    ---@param self UEFConcussionTorpedo01
+    ---@param TargetType string
+    ---@param TargetEntity Entity
     OnImpact = function(self, TargetType, TargetEntity)
         if not TargetEntity or not EntityCategoryContains(categories.PROJECTILE, TargetEntity) then
             nukeProjectile = self:CreateProjectile('/mods/BlackOpsFAF-EXUnits/effects/Entities/EXCTorpEffectController01/EXCTorpEffectController01_proj.bp', 0, 0, 0, nil, nil, nil):SetCollision(false)

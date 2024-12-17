@@ -1,8 +1,7 @@
---
--- Terran CDR Nuke
---
 local TIFMissileNuke = import('/lua/terranprojectiles.lua').TIFMissileNuke
 
+-- Terran CDR Nuke
+---@class UEFTacNuke01 : TIFMissileNuke
 UEFTacNuke01 = Class(TIFMissileNuke) {
 
     BeamName = '/effects/emitters/missile_exhaust_fire_beam_06_emit.bp',
@@ -13,6 +12,7 @@ UEFTacNuke01 = Class(TIFMissileNuke) {
     },
     ThrustEffects = {'/effects/emitters/nuke_munition_launch_trail_04_emit.bp',},
 
+    ---@param self UEFTacNuke01
     OnCreate = function(self)
         TIFMissileNuke.OnCreate(self)
         self.effectEntityPath = '/mods/BlackOpsFAF-EXUnits/effects/Entities/EXETacNukeEffectController01/EXETacNukeEffectController01_proj.bp'
@@ -20,6 +20,7 @@ UEFTacNuke01 = Class(TIFMissileNuke) {
     end,
 
     -- Tactical nuke has different flight path
+    ---@param self UEFTacNuke01
     MovementThread = function(self)
         local army = self:GetArmy()
         local target = self:GetTrackingTarget()
@@ -36,6 +37,7 @@ UEFTacNuke01 = Class(TIFMissileNuke) {
         end
     end,
 
+    ---@param self UEFTacNuke01
     SetTurnRateByDist = function(self)
         local dist = self:GetDistanceToTarget()
         if dist > 50 then
@@ -58,6 +60,7 @@ UEFTacNuke01 = Class(TIFMissileNuke) {
         end
     end,
 
+    ---@param self UEFTacNuke01
     OnEnterWater = function(self)
         TIFMissileNuke.OnEnterWater(self)
         self:SetDestroyOnWater(true)
